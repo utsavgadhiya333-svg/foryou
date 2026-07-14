@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You Admin</title>
+    <style>
+
+.tab-content h3 {
+    margin-top: 0;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 1. LOGIN SCREEN STYLES --- */
+        .login-page {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: #1f2833;
+            border: 2px solid #2ecc71;
+            padding: 40px 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.2);
+        }
+
+        .login-container h1 {
+            color: #2ecc71;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-container p {
+            color: #c5c6c7;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        input[type="password"], input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0b0c10;
+            border: 1px solid #2f3e46;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .login-btn, .generate-btn, .verify-btn, .action-main-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2ecc71;
+            border: none;
+            border-radius: 5px;
+            color: #0b0c10;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .login-btn:hover, .generate-btn:hover, .verify-btn:hover, .action-main-btn:hover {
+            background: #1f2833;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        /* --- 2. DASHBOARD STYLES --- */
+        .dashboard-page {
+            display: none;
+            width: 100%;
+        }
+
+        .status-bar {
+            background-color: #1f2833;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #2ecc71;
+        }
+
+        .status-online {
+            color: #2ecc71;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+
+        .admin-title {
+            color: #2ecc71;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: #151b24;
+            overflow-x: auto;
+            border-bottom: 1px solid #2f3e46;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            color: #c5c6c7;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            white-space: nowrap;
+            outline: none;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            color: #2ecc71;
+            border-bottom: 3px solid #2ecc71;
+            background-color: #1f2833;
+        }
+
+        .main-container {
+            padding: 20px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background-color: #1f2833;
+            border: 1px solid #2f3e46;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            color: #c5c6c7;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #2f3e46;
+            padding-bottom: 10px;
+        }
+
+        .content-panel {
+            display: none;
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #a9a9a9;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #0b0c10;
+            border: 1px dashed #2ecc71;
+            border-radius: 5px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #2ecc71;
+            display: none;
+            word-break: break-all;
+        }
+
+        /* --- SCREENSHOT STATS BOXES --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background-color: #151b24;
+            border: 1px solid #1f2833;
+            border-radius: 8px;
+            padding: 12px 5px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: #a9a9a9;
+            text-transform: uppercase;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .color-total { color: #ffffff; }
+        .color-valid { color: #2ecc71; }
+        .color-expired { color: #e74c3c; }
+        .color-locked { color: #3498db; }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-header span {
+            font-size: 0.8rem;
+            color: #a9a9a9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .refresh-btn {
+            background-color: #151b24;
+            border: 1px solid #2f3e46;
+            color: #c5c6c7;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* --- KEY CARD DESIGN --- */
+        .key-card {
+            background-color: #151b24;
+            border: 1px solid #1f2833;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .key-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .key-string {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 0.95rem;
+            word-break: break-all;
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .key-card.expired-card .key-string {
+            color: #a9a9a9;
+            text-decoration: line-through;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-reset { background-color: rgba(52, 152, 219, 0.2); color: #3498db; border: 1px solid #3498db; }
+        .btn-del { background-color: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+
+        .key-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 15px;
+            font-size: 0.8rem;
+            color: #a9a9a9;
+            margin-bottom: 12px;
+        }
+
+        .key-details-grid span strong {
+            color: #ffffff;
+        }
+
+        .device-info-box {
+            background-color: #0b0c10;
+            border: 1px solid #1f2833;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.75rem;
+            color: #a9a9a9;
+            margin-bottom: 12px;
+        }
+
+        .device-title {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        .device-uid {
+            font-family: monospace;
+            color: #ffffff;
+        }
+
+        .badges-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .card-badge {
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-green { background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+        .badge-blue { background-color: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid #3498db; }
+        .badge-red { background-color: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid #e74c3c; }
+        .badge-orange { background-color: rgba(230, 126, 34, 0.15); color: #e67e22; border: 1px solid #e67e22; }
+
+        .no-keys-msg {
+            text-align: center;
+            color: #a9a9a9;
+            padding: 40px 20px;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .verify-output {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+        }
+        .v-success { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
+        .v-error { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+
+        /* --- 3. MOD LOCKS STYLES --- */
+        .toggle-switch-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #151b24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #2ecc71;
+            transition: 0.3s ease;
+        }
+
+        .toggle-switch-group.locked {
+            border-left-color: #e74c3c;
+            background: #1a1215;
+        }
+
+        .toggle-info h4 {
+            font-size: 1rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-info p {
+            font-size: 0.75rem;
+            color: #a9a9a9;
+            margin-top: 4px;
+        }
+
+        /* Standard Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e74c3c; /* Locked is Red */
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2ecc71; /* Unlocked is Green */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .lock-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .badge-locked { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+        .badge-unlocked { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
+
+        /* --- CLIENT SIDE LIVE SIMULATOR APP --- */
+        .client-app-sim {
+            background: #0b0c10;
+            border: 2px solid #2f3e46;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .client-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2f3e46;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .client-title {
+            color: #e67e22;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .client-feature-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #151b24;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #2f3e46;
+        }
+
+        /* Custom Checkbox for Client App Simulator */
+        .client-checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            user-select: none;
+            color: #ffffff;
+        }
+
+        .client-checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #2f3e46;
+            border-radius: 4px;
+        }
+
+        .client-checkbox-container:hover input ~ .checkmark {
+            background-color: #4f5d65;
+        }
+
+        .client-checkbox-container input:checked ~ .checkmark {
+            background-color: #2ecc71;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .client-checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .client-checkbox-container .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Disabled State styling when locked */
+        .client-feature-row.client-disabled {
+            opacity: 0.4;
+        }
+
+        .client-feature-row.client-disabled .client-checkbox-container {
+            cursor: not-allowed;
+        }
+
+        .client-toast {
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-align: center;
+            display: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .login-container { padding: 30px 20px; }
+            .row { flex-direction: column; gap: 0; }
+            .key-details-grid { grid-template-columns: 1fr; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 1. LOGIN PAGE ================= -->
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <h1>For You Admin</h1>
+            <p>Enter your admin token to continue</p>
+            <div class="input-group">
+                <input type="password" id="adminToken" placeholder="Enter token..." required>
+            </div>
+            <button class="login-btn" onclick="checkToken()">Login →</button>
+        </div>
+    </div>
+
+    <!-- ================= 2. DASHBOARD PAGE ================= -->
+    <div class="dashboard-page" id="dashboardPage">
+        <div class="status-bar">
+            <div class="admin-title">For You Admin</div>
+            <div class="status-online">
+                <span class="status-dot"></span> APP ONLINE
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'generateTab')">Generate</button>
+            <button class="tab-btn" onclick="switchTab(event, 'allKeysTab')">All Keys</button>
+            <button class="tab-btn" onclick="switchTab(event, 'modLocksTab')">Mod Locks</button>
+            <button class="tab-btn" onclick="switchTab(event, 'testVerificationTab')">Test Lock (Simulator)</button>
+            <button class="tab-btn" onclick="switchTab(event, 'resellersTab')">Resellers</button>
+            <button class="tab-btn" onclick="switchTab(event, 'resellerInfoTab')">Reseller Info</button>
+            <button class="tab-btn" onclick="switchTab(event, 'features')">features</button>
+        </div>
+
+        <div class="main-container">
+            
+            <!-- PANEL 1: GENERATE KEY -->
+            <div id="generateTab" class="content-panel active">
+                <div class="card">
+                    <div class="card-title">Create New Key</div>
+                    
+                    <div class="form-group">
+                        <label for="keyType">Key Type</label>
+                        <select id="keyType">
+                            <option value="Normal Key">Normal Key</option>
+                            <option value="Mod Menu Key">Mod Menu Key</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="durationValue">Duration</label>
+                                <input type="number" id="durationValue" value="1" min="1">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="durationUnit">Unit</label>
+                                <select id="durationUnit" onchange="toggleDurationInput()">
+                                    <option value="Minutes">Minutes</option>
+                                    <option value="Hours">Hours</option>
+                                    <option value="Days" selected>Days</option>
+                                    <option value="Months">Months</option>
+                                    <option value="Lifetime">Lifetime</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerLabel">Label (Optional)</label>
+                        <input type="text" id="customerLabel" placeholder="e.g. Customer Name">
+                    </div>
+
+                    <button class="generate-btn" onclick="generateKey()">
+                        ⚡ Generate Key
+                    </button>
+
+                    <div class="result-box" id="resultKey"></div>
+                </div>
+            </div>
+<!-- Resellers Tab -->
+<div id="resellersTab" class="content-panel">
+    <div class="card">
+        <div class="card-title">Create Reseller</div>
+        <input type="text" id="rName" placeholder="Username">
+        <input type="password" id="rPass" placeholder="Password">
+        <input type="number" id="rCredits" placeholder="Initial Credits">
+        <button class="generate-btn" onclick="addReseller()">+ CREATE RESELLER</button>
+    </div>
+</div>
+
+
+<!-- Reseller Info Tab -->
+<div id="resellerInfoTab" class="content-panel">
+    <div class="card">
+        <div class="card-title">Reseller Activity Log</div>
+        <table style="width:100%; border-collapse:collapse; color:#fff;">
+            <thead>
+                <tr><th>User</th><th>Credits</th><th>Keys</th></tr>
+            </thead>
+            <tbody id="resellerTableBody"></tbody>
+        </table>
+    </div>
+</div>
+            <!-- PANEL 2: ALL KEYS (HWID & AUTO EXPIRY) -->
+            <div id="allKeysTab" class="content-panel">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-num color-total" id="totalCount">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num color-valid" id="validCount">0</div>
+                        <div class="stat-label">Valid</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num color-expired" id="expiredCount">0</div>
+                        <div class="stat-label">Expired</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num color-locked" id="lockedCount">0</div>
+                        <div class="stat-label">Device Bound</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <span>All Keys Status</span>
+                    <button class="refresh-btn" onclick="checkKeyExpiry()">↻ Refresh</button>
+                </div>
+
+                <div id="keysCardsContainer"></div>
+                <div id="noKeysMessage" class="no-keys-msg">No keys generated yet.</div>
+            </div>
+
+            <!-- PANEL 3: MOD LOCKS (LIVE REMOTES) -->
+            <div id="modLocksTab" class="content-panel">
+                <!-- Live Hack / Features Toggles -->
+                <div class="card">
+                    <div class="card-title">🔒 Mod Locks (Remote Access Control)</div>
+                    <p style="color: #a9a9a9; font-size: 0.85rem; margin-bottom: 20px;">
+                        When a feature is set to **LOCK**, users cannot interact with or toggle it on their devices.
+                    </p>
+                    <div id="featureTogglesContainer">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Live Client Preview (User Mobile App Layout) -->
+                <div class="card">
+                    <div class="card-title">📱 Live User App Preview</div>
+                    <p style="color: #a9a9a9; font-size: 0.8rem; margin-bottom: 12px;">
+                        This is a live preview of the client application interface. Toggle locks above to test interaction.
+                    </p>
+                    <div class="client-app-sim">
+                        <div class="client-header">
+                            <span class="client-title">VIP Mod Panel</span>
+                            <span style="font-size: 0.75rem; color: #2ecc71; font-weight: bold;">● Connected</span>
+                        </div>
+                        
+                        <div id="clientFeaturesContainer">
+                            <!-- User App features loaded dynamically -->
+                        </div>
+                        <div class="client-toast" id="clientToast">Feature is currently locked by Admin! 🔒</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 4: CLIENT SIMULATOR (TEST HWID LOCK LIVE) -->
+            <div id="testVerificationTab" class="content-panel">
+                <div class="card">
+                    <div class="card-title">📱 Client App Simulator (HWID Test)</div>
+                    <p style="color: #a9a9a9; font-size: 0.85rem; margin-bottom: 15px;">
+                        Test how device locks behave using simulated hardware IDs. Try logging in with different phone profiles.
+                    </p>
+                    
+                    <div class="form-group">
+                        <label for="testKeyInput">Enter Key to Login</label>
+                        <input type="text" id="testKeyInput" placeholder="For_You_XXXXX_XXXXXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="testDeviceUID">Phone Device UID (Simulator)</label>
+                        <select id="testDeviceUID">
+                            <option value="PHONE_VIP_USER_AAAA">📱 Phone A (User Phone)</option>
+                            <option value="PHONE_HACKER_BBBB">📱 Phone B (Hacker/Friend Phone)</option>
+                        </select>
+                    </div>
+
+                    <button class="verify-btn" onclick="simulateClientLogin()">🚀 Login From Phone</button>
+                    
+                    <div class="verify-output" id="verifyResult"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        const correctToken = "ADMIN123"; 
+        let keysDatabase = [];
+
+        // Mod Locks Database configured with the requested options (Pure English)
+        let modLocksDatabase = [
+            { id: 1, name: "Normal", key: "normal_lock", status: "Unlocked" },
+            { id: 2, name: "Normal Lib & Tree Remove", key: "normal_lib_tree_lock", status: "Unlocked" },
+            { id: 3, name: "Mod Menu", key: "mod_menu_lock", status: "Unlocked" }
+        ];
+
+        function checkToken() {
+            const tokenInput = document.getElementById('adminToken').value;
+            if(tokenInput === "") {
+                alert("Please enter a token!");
+            } else if(tokenInput === correctToken) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboardPage').style.display = 'block';
+                setInterval(checkKeyExpiry, 1000); // Live checking
+                renderModLocks();
+            } else {
+                alert("Invalid token! Please try again.");
+            }
+        }
+
+        function toggleDurationInput() {
+            const unit = document.getElementById('durationUnit').value;
+            const valueInput = document.getElementById('durationValue');
+            if(unit === 'Lifetime') {
+                valueInput.value = '';
+                valueInput.disabled = true;
+            } else {
+                valueInput.disabled = false;
+                if(!valueInput.value) valueInput.value = 1;
+            }
+        }
+
+        function switchTab(event, tabId) {
+            const panels = document.getElementsByClassName('content-panel');
+            for (let panel of panels) panel.classList.remove('active');
+            
+            const tabButtons = document.getElementsByClassName('tab-btn');
+            for (let btn of tabButtons) btn.classList.remove('active');
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            if(tabId === 'modLocksTab') {
+                renderModLocks();
+            } else {
+                checkKeyExpiry();
+            }
+        }
+
+        function generateKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let randomStr = '';
+            for (let i = 0; i < 12; i++) {
+                randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            let generatedKey = `For_You_${randomStr.substring(0, 5)}_${randomStr.substring(5, 12)}`;
+            
+            const type = document.getElementById('keyType').value;
+            const durationVal = parseInt(document.getElementById('durationValue').value) || 0;
+            const durationUnit = document.getElementById('durationUnit').value;
+            const label = document.getElementById('customerLabel').value || 'None';
+
+            let now = new Date();
+            let expiryTime = null;
+
+            if (durationUnit !== 'Lifetime') {
+                expiryTime = new Date(now.getTime());
+                if (durationUnit === 'Minutes') expiryTime.setMinutes(now.getMinutes() + durationVal);
+                if (durationUnit === 'Hours') expiryTime.setHours(now.getHours() + durationVal);
+                if (durationUnit === 'Days') expiryTime.setDate(now.getDate() + durationVal);
+                if (durationUnit === 'Months') expiryTime.setMonth(now.getMonth() + durationVal);
+            }
+
+            const newKeyObject = {
+                id: Date.now(),
+                key: generatedKey,
+                type: type,
+                durationDisplay: durationUnit === 'Lifetime' ? 'LIFETIME' : `${durationVal} ${durationUnit}`,
+                label: label,
+                reseller: 'Admin',
+                created: now.toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+                expiryDate: expiryTime,
+                deviceUID: 'NOT_BOUND',
+                status: 'Valid'
+            };
+            
+            keysDatabase.push(newKeyObject);
+            
+            const resultBox = document.getElementById('resultKey');
+            resultBox.innerText = generatedKey;
+            resultBox.style.display = 'block';
+            
+            checkKeyExpiry();
+        }
+
+        function checkKeyExpiry() {
+            let currentTime = new Date();
+            keysDatabase.forEach(item => {
+                if (item.expiryDate && item.status === 'Valid') {
+                    if (currentTime >= new Date(item.expiryDate)) {
+                        item.status = 'Expired';
+                    }
+                }
+            });
+            updateKeysLayout();
+        }
+
+        // ================= MOD LOCKS LOGIC =================
+        function renderModLocks() {
+            const adminContainer = document.getElementById('featureTogglesContainer');
+            const clientContainer = document.getElementById('clientFeaturesContainer');
+            
+            if(!adminContainer || !clientContainer) return;
+            
+            adminContainer.innerHTML = '';
+            clientContainer.innerHTML = '';
+
+            modLocksDatabase.forEach(lock => {
+                const isUnlocked = lock.status === 'Unlocked';
+                
+                // 1. Render Admin Controls
+                const adminHtml = `
+                    <div class="toggle-switch-group ${isUnlocked ? '' : 'locked'}">
+                        <div class="toggle-info">
+                            <h4>${lock.name} 
+                                <span class="lock-badge ${isUnlocked ? 'badge-unlocked' : 'badge-locked'}">
+                                    ${isUnlocked ? '🔓 UNLOCKED' : '🔒 LOCKED'}
+                                </span>
+                            </h4>
+                            <p>Code Key: ${lock.key}</p>
+                        </div>
+                        <div>
+                            <label class="switch">
+                                <input type="checkbox" ${isUnlocked ? 'checked' : ''} onchange="toggleLockState(${lock.id}, this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+                adminContainer.innerHTML += adminHtml;
+
+                // 2. Render Simulated App Mock Elements
+                const clientHtml = `
+                    <div class="client-feature-row ${isUnlocked ? '' : 'client-disabled'}" onclick="handleClientFeatureClick(event, ${lock.id}, ${isUnlocked})">
+                        <label class="client-checkbox-container" style="${isUnlocked ? 'cursor:pointer;' : 'cursor:not-allowed;'}">
+                            ${lock.name}
+                            <input type="checkbox" class="client-checkbox-input" id="client_check_${lock.id}" ${isUnlocked ? '' : 'disabled'}>
+                            <span class="checkmark"></span>
+                        </label>
+                        <span style="font-size: 0.7rem; color: ${isUnlocked ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">
+                            ${isUnlocked ? 'ACTIVE' : 'LOCKED'}
+                        </span>
+                    </div>
+                `;
+                clientContainer.innerHTML += clientHtml;
+            });
+        }
+
+        function toggleLockState(id, isChecked) {
+            const item = modLocksDatabase.find(l => l.id === id);
+            if(item) {
+                item.status = isChecked ? 'Unlocked' : 'Locked';
+                renderModLocks(); 
+            }
+        }
+
+        // Handle Simulator Feature Clicks (Prevent action on Lock state)
+        function handleClientFeatureClick(event, id, isUnlocked) {
+            if (!isUnlocked) {
+                const checkbox = document.getElementById(`client_check_${id}`);
+                if(checkbox) checkbox.checked = false;
+                
+                const toast = document.getElementById('clientToast');
+                toast.innerText = "Access Denied: This feature is currently LOCKED! 🔒";
+                toast.style.display = 'block';
+                
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+                
+                event.preventDefault();
+                return false;
+            }
+        }
+
+        // ================= CLIENT VERIFICATION SIMULATOR =================
+        function simulateClientLogin() {
+            const inputKey = document.getElementById('testKeyInput').value.trim();
+            const deviceUID = document.getElementById('testDeviceUID').value;
+            const outBox = document.getElementById('verifyResult');
+
+            outBox.style.display = 'block';
+            outBox.className = 'verify-output';
+
+            if(!inputKey) {
+                outBox.innerText = "❌ Please enter a valid Key!";
+                outBox.classList.add('v-error');
+                return;
+            }
+
+            const targetKey = keysDatabase.find(k => k.key === inputKey);
+
+            if(!targetKey) {
+                outBox.innerText = "❌ Invalid Key! Not found in Database.";
+                outBox.classList.add('v-error');
+                return;
+            }
+
+            if(targetKey.status === 'Expired') {
+                outBox.innerText = "❌ Login Failed! This key has Expired.";
+                outBox.classList.add('v-error');
+                return;
+            }
+
+            if(targetKey.deviceUID === 'NOT_BOUND') {
+                targetKey.deviceUID = deviceUID;
+                outBox.innerText = `✅ Success! Device Registered & Logged In.\n(Locked to: ${deviceUID})`;
+                outBox.classList.add('v-success');
+                checkKeyExpiry();
+            } else if(targetKey.deviceUID === deviceUID) {
+                outBox.innerText = "✅ Success! Welcome Back (Device Matched).";
+                outBox.classList.add('v-success');
+            } else {
+                outBox.innerText = `❌ Access Denied! Device Mismatch.\nKey is locked to another phone.`;
+                outBox.classList.add('v-error');
+            }
+        }
+
+        function resetKey(id) {
+            const item = keysDatabase.find(k => k.id === id);
+            if(item) {
+                if(item.status === 'Expired') {
+                    alert("Cannot reset an expired key!");
+                    return;
+                }
+                item.deviceUID = 'NOT_BOUND';
+                alert(`Device Unlinked successfully! Ready for a new phone.`);
+                updateKeysLayout();
+            }
+        }
+
+        function deleteKey(id) {
+            if(confirm("Are you sure you want to delete this key?")) {
+                keysDatabase = keysDatabase.filter(k => k.id !== id);
+                updateKeysLayout();
+            }
+        }
+
+        function updateKeysLayout() {
+            const container = document.getElementById('keysCardsContainer');
+            const noKeysMsg = document.getElementById('noKeysMessage');
+            
+            if(!container) return;
+            container.innerHTML = '';
+            
+            document.getElementById('totalCount').innerText = keysDatabase.length;
+            document.getElementById('validCount').innerText = keysDatabase.filter(k => k.status === 'Valid').length;
+            document.getElementById('expiredCount').innerText = keysDatabase.filter(k => k.status === 'Expired').length;
+            document.getElementById('lockedCount').innerText = keysDatabase.filter(k => k.deviceUID !== 'NOT_BOUND').length;
+
+            if(keysDatabase.length === 0) {
+                noKeysMsg.style.display = 'block';
+                return;
+            }
+            
+            noKeysMsg.style.display = 'none';
+            
+            for(let i = keysDatabase.length - 1; i >= 0; i--) {
+                const item = keysDatabase[i];
+                const isExpired = item.status === 'Expired';
+                const isBound = item.deviceUID !== 'NOT_BOUND';
+                
+                let badgeStatusHtml = `<span class="card-badge badge-green">✓ Valid</span>`;
+                if(isExpired) {
+                    badgeStatusHtml = `<span class="card-badge badge-red">❌ Expired</span>`;
+                }
+
+                const card = `
+                    <div class="key-card ${isExpired ? 'expired-card' : ''}">
+                        <div class="key-card-header">
+                            <div class="key-string">${item.key}</div>
+                            <div class="action-btns">
+                                <button class="btn-small btn-reset" ${isExpired ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="resetKey(${item.id})">Reset HWID</button>
+                                <button class="btn-small btn-del" onclick="deleteKey(${item.id})">Del</button>
+                            </div>
+                        </div>
+                        
+                        <div class="key-details-grid">
+                            <span>Label: <strong>${item.label}</strong></span>
+                            <span>Reseller: <strong>${item.reseller}</strong></span>
+                            <span>Created: <strong>${item.created}</strong></span>
+                            <span>Type: <strong>${item.type}</strong></span>
+                        </div>
+
+                        <div class="device-info-box">
+                            <div class="device-title">🔒 Device Lock Status</div>
+                            <div class="device-uid" style="color: ${isBound ? '#3498db' : '#e67e22'}">
+                                ${isExpired ? 'SESSION_EXPIRED' : (isBound ? `LOCKED: ${item.deviceUID}` : 'FREE (No phone connected yet)')}
+                            </div>
+                        </div>
+
+                        <div class="badges-row">
+                            ${badgeStatusHtml}
+                            <span class="card-badge ${isBound ? 'badge-blue' : 'badge-orange'}">${isBound ? '🔒 BOUND' : '🔓 OPEN'}</span>
+                            <span class="card-badge ${isExpired ? 'badge-red' : 'badge-green'}">☀️ ${item.durationDisplay.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            }
+        }
+                let resellers = [];
+
+                 function addReseller() {
+               
+                  const name = document.getElementById('rName').value;
+                  const credits = document.getElementById('rCredits').value;
+                   if(name && credits) {
+        resellers.push({ username: name, credits: credits, generated: 0 });
+        let tbody = document.getElementById('resellerTableBody');
+        tbody.innerHTML += `<tr><td>${name}</td><td>${credits}</td><td>0</td></tr>`;
+        alert("Reseller Added!");
+    }
+}
+function saveFeatures() {
+        const normal = document.getElementById('editNormal').value;
+        const full = document.getElementById('editFull').value;
+        alert("Features Updated Successfully!");
+    }
+
+    </script>
+
+</body>
+</html>
