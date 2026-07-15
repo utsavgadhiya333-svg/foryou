@@ -1113,7 +1113,8 @@
         </div>
 
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'generateTab')">Generate</button>
+            <button class="tab-btn" onclick="switchTab(event, 'generateTab')">Generate</button>
+            <button class="tab-btn active" onclick="switchTab(event, 'keyManagementTab')">🔑 Keys</button>
             <button class="tab-btn" onclick="switchTab(event, 'allKeysTab')">All Keys</button>
             <button class="tab-btn" onclick="switchTab(event, 'modLocksTab')">Mod Locks</button>
             <button class="tab-btn" onclick="switchTab(event, 'testVerificationTab')">Test Lock</button>
@@ -1143,8 +1144,31 @@
                 </div>
             </div>
 
+            <!-- ========================================== -->
+            <!-- PANEL: KEY MANAGEMENT                      -->
+            <!-- ========================================== -->
+            <div id="keyManagementTab" class="content-panel active">
+                <div class="card">
+                    <div class="card-title">🔑 Key Management</div>
+                    
+                    <!-- Generate Key -->
+                    <div class="form-group">
+                        <label>Generate New Key (Days)</label>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <input type="number" id="keyDuration" placeholder="Days" value="30" style="flex:1;min-width:80px;padding:10px;background:#0b0c10;border:1px solid #2f3e46;border-radius:5px;color:#fff;">
+                            <button onclick="generateKeyFromTab()" style="flex:1;min-width:100px;padding:10px;background:#2ecc71;border:none;border-radius:5px;color:#0b0c10;font-weight:bold;cursor:pointer;">⚡ Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- All Keys List -->
+                    <div id="keysList" style="margin-top:12px;">
+                        <p style="color:#a9a9a9;">No keys generated yet.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- PANEL 1: GENERATE KEY -->
-            <div id="generateTab" class="content-panel active">
+            <div id="generateTab" class="content-panel">
                 <div class="card">
                     <div class="card-title">Create New Key</div>
                     
@@ -1379,11 +1403,9 @@
         function toggleAppMaster(isChecked) {
             isAppOnline = isChecked;
             
-            // Sync both toggles
             document.getElementById('appMasterToggle').checked = isChecked;
             document.getElementById('appMasterToggleBig').checked = isChecked;
             
-            // Update status display
             const statusDisplay = document.getElementById('appStatusDisplay');
             const statusText = document.getElementById('appToggleStatus');
             const statusBig = document.getElementById('appStatusBigText');
@@ -1402,7 +1424,6 @@
                     clientIndicator.textContent = '● Connected';
                     clientIndicator.style.color = '#2ecc71';
                 }
-                // Enable client features
                 document.querySelectorAll('.client-feature-row').forEach(el => {
                     el.classList.remove('client-disabled');
                 });
@@ -1421,7 +1442,6 @@
                     clientIndicator.textContent = '● Disconnected';
                     clientIndicator.style.color = '#e74c3c';
                 }
-                // Disable client features
                 document.querySelectorAll('.client-feature-row').forEach(el => {
                     el.classList.add('client-disabled');
                 });
@@ -1430,18 +1450,12 @@
                 });
             }
             
-            // Save to localStorage for App to read
             localStorage.setItem('app_online', JSON.stringify(isAppOnline));
-            
-            // Show toast notification
             showToast(isAppOnline ? '✅ App is now ONLINE' : '⛔ App is now OFFLINE');
-            
-            // Sync all data to App
             syncAllToApp();
         }
 
         function syncAllToApp() {
-            // Save all data to localStorage for App to read
             localStorage.setItem('app_online', JSON.stringify(isAppOnline));
             localStorage.setItem('app_features', JSON.stringify(features));
             localStorage.setItem('app_mod_locks', JSON.stringify(modLocksDatabase));
@@ -1449,7 +1463,6 @@
             localStorage.setItem('app_resellers', JSON.stringify(resellers));
             localStorage.setItem('app_last_sync', new Date().toISOString());
             
-            // Update sync badge
             const badge = document.getElementById('sync-status-badge');
             if (badge) {
                 badge.textContent = '✓ Synced to App';
@@ -1468,7 +1481,6 @@
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('dashboardPage').style.display = 'block';
                 
-                // Load app status from localStorage
                 const savedStatus = localStorage.getItem('app_online');
                 if (savedStatus !== null) {
                     isAppOnline = JSON.parse(savedStatus);
@@ -1481,23 +1493,136 @@
                 renderModLocks();
                 loadFeatures();
                 loadResellers();
+                displayKeysInTab();
                 syncAllToApp();
             } else {
                 alert("Invalid token! Please try again.");
             }
         }
 
-        function toggleDurationInput() {
-            const unit = document.getElementById('durationUnit').value;
-            const valueInput = document.getElementById('durationValue');
-            if(unit === 'Lifetime') {
-                valueInput.value = '';
-                valueInput.disabled = true;
-            } else {
-                valueInput.disabled = false;
-                if(!valueInput.value) valueInput.value = 1;
+        // ==========================================
+        // KEY MANAGEMENT FUNCTIONS
+        // ==========================================
+
+        function generateKeyFromTab() {
+            const days = parseInt(document.getElementById('keyDuration').value) || 30;
+            const key = generateRandomKey();
+            
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + days);
+            
+            let keys = JSON.parse(localStorage.getItem('app_keys') || '[]');
+            keys.push({
+                key: key,
+                usedDevices: [],
+                expiryDate: expiryDate.toISOString().split('T')[0],
+                created: new Date().toISOString().split('T')[0],
+                status: 'Active'
+            });
+            localStorage.setItem('app_keys', JSON.stringify(keys));
+            
+            displayKeysInTab();
+            showToast('✅ Key Generated: ' + key);
+        }
+
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let randomStr = '';
+            for (let i = 0; i < 10; i++) {
+                randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return `ForYou_${randomStr.substring(0, 5)}_${randomStr.substring(5, 10)}`;
+        }
+
+        function displayKeysInTab() {
+            const keys = JSON.parse(localStorage.getItem('app_keys') || '[]');
+            const container = document.getElementById('keysList');
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="color:#a9a9a9;">No keys generated yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = keys.map((k, index) => {
+                const isExpired = new Date(k.expiryDate) < new Date();
+                const usedCount = k.usedDevices ? k.usedDevices.length : 0;
+                const maxDevices = 2;
+                
+                return `
+                    <div class="key-card" style="background:#151b24;padding:12px;margin-bottom:8px;border-radius:6px;border-left:3px solid ${isExpired ? '#e74c3c' : '#2ecc71'};">
+                        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;">
+                            <span style="color:#2ecc71;font-weight:bold;font-size:14px;">${k.key}</span>
+                            <span style="color:${isExpired ? '#e74c3c' : '#2ecc71'};font-size:12px;font-weight:bold;">
+                                ${isExpired ? '❌ Expired' : '✅ Active'}
+                            </span>
+                        </div>
+                        <div style="font-size:12px;color:#a9a9a9;margin-top:4px;">
+                            <div>📅 Expires: ${k.expiryDate}</div>
+                            <div>📱 Devices: ${usedCount}/${maxDevices} used</div>
+                            <div>📝 Created: ${k.created}</div>
+                            ${k.usedDevices && k.usedDevices.length > 0 ? `<div>🔑 Device IDs: ${k.usedDevices.join(', ')}</div>` : ''}
+                        </div>
+                        <div style="margin-top:6px;">
+                            <button onclick="copyKey('${k.key}')" style="background:#3498db;border:none;color:white;padding:2px 12px;border-radius:4px;cursor:pointer;font-size:11px;">📋 Copy</button>
+                            <button onclick="deleteKeyFromTab(${index})" style="background:#e74c3c;border:none;color:white;padding:2px 12px;border-radius:4px;cursor:pointer;font-size:11px;">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteKeyFromTab(index) {
+            if (confirm('Delete this key?')) {
+                let keys = JSON.parse(localStorage.getItem('app_keys') || '[]');
+                keys.splice(index, 1);
+                localStorage.setItem('app_keys', JSON.stringify(keys));
+                displayKeysInTab();
+                showToast('🗑️ Key deleted!');
             }
         }
+
+        function copyKey(key) {
+            navigator.clipboard.writeText(key);
+            showToast('✅ Key copied to clipboard!');
+        }
+
+        // ==========================================
+        // KEY VERIFICATION (Called from App)
+        // ==========================================
+
+        function verifyKeyFromApp(key, deviceId) {
+            let keys = JSON.parse(localStorage.getItem('app_keys') || '[]');
+            
+            for (let i = 0; i < keys.length; i++) {
+                if (keys[i].key === key) {
+                    if (new Date(keys[i].expiryDate) < new Date()) {
+                        return { valid: false, reason: 'expired' };
+                    }
+                    
+                    if (!keys[i].usedDevices) {
+                        keys[i].usedDevices = [];
+                    }
+                    
+                    if (keys[i].usedDevices.includes(deviceId)) {
+                        return { valid: true, reason: 'already_registered' };
+                    }
+                    
+                    if (keys[i].usedDevices.length >= 2) {
+                        return { valid: false, reason: 'max_devices' };
+                    }
+                    
+                    keys[i].usedDevices.push(deviceId);
+                    localStorage.setItem('app_keys', JSON.stringify(keys));
+                    return { valid: true, reason: 'registered' };
+                }
+            }
+            
+            return { valid: false, reason: 'not_found' };
+        }
+
+        // ==========================================
+        // TAB SWITCH
+        // ==========================================
 
         function switchTab(event, tabId) {
             const panels = document.getElementsByClassName('content-panel');
@@ -1513,12 +1638,26 @@
             if(tabId === 'featuresTab') renderFeatures();
             if(tabId === 'resellersTab') loadResellers();
             if(tabId === 'resellerInfoTab') renderResellerInfo();
+            if(tabId === 'keyManagementTab') displayKeysInTab();
             checkKeyExpiry();
         }
 
         // ==========================================
-        // KEY GENERATION
+        // KEY GENERATION (OLD)
         // ==========================================
+
+        function toggleDurationInput() {
+            const unit = document.getElementById('durationUnit').value;
+            const valueInput = document.getElementById('durationValue');
+            if(unit === 'Lifetime') {
+                valueInput.value = '';
+                valueInput.disabled = true;
+            } else {
+                valueInput.disabled = false;
+                if(!valueInput.value) valueInput.value = 1;
+            }
+        }
+
         function generateKey() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let randomStr = '';
@@ -2127,14 +2266,13 @@
         // ==========================================
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.content-panel').forEach(el => el.classList.remove('active'));
-            document.getElementById('generateTab').classList.add('active');
+            document.getElementById('keyManagementTab').classList.add('active');
             
             document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
                 btn.classList.remove('active');
-                if (idx === 0) btn.classList.add('active');
+                if (idx === 1) btn.classList.add('active');
             });
             
-            // Load app status
             const savedStatus = localStorage.getItem('app_online');
             if (savedStatus !== null) {
                 isAppOnline = JSON.parse(savedStatus);
@@ -2142,6 +2280,8 @@
                 document.getElementById('appMasterToggleBig').checked = isAppOnline;
                 toggleAppMaster(isAppOnline);
             }
+            
+            displayKeysInTab();
         });
     </script>
 
