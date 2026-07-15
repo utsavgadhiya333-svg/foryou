@@ -1,16 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
 
-// આ તમારા પ્રોજેક્ટની કાયમી વિગતો છે
+// અહીં તમારી સાચી URL અને Service Role Key મૂકો
 const supabase = createClient(
   'https://zfwtavhtopzqdxemearc.supabase.co', 
-  'sb_publishable_QBPWSQW1JsM0JDHfIEOV2g_LjYw6wwW' 
-  // નોંધ: મેં અહીં placeholder મૂક્યું છે, તમારી વાસ્તવિક sb_secret_ કી આની જગ્યાએ મૂકજો.
+  'YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE' 
 );
 
 export default async function handler(req, res) {
   const { action, key } = req.query;
 
-  // જો action 'validate' હોય તો જ કી ચેક કરો
   if (action === 'validate') {
     if (!key) {
       return res.status(400).json({ status: "error", message: "Key is missing" });
