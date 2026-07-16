@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
   'https://sakhfcumtkkgxuwiyqzk.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNha2hmY3VtdGtrZ3h1d2l5cXprIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NDI2OTAyNX0.t9Nl48GkSj2bC32G5Gj2W6K83xO3_j9gYnN_y23V8kM'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNha2hmY3VtdGtrZ3h1d2l5cXprIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NDEwNDU4MywiZXhwIjoyMDk5NjgwNTgzfQ.PFA7ACXpV8XGU6Ic8WDwG6A2AHC0UP0iCRQJC9jfbw0'
 );
 
 export default async function handler(req, res) {
@@ -17,6 +17,39 @@ export default async function handler(req, res) {
 
   const { action, key } = req.query;
 
+  // ✅ Test Connection
+  if (action === 'test') {
+    try {
+      const { data, error } = await supabase
+        .from('key')
+        .select('*')
+        .limit(1);
+
+      if (error) {
+        console.error("Supabase Error:", error);
+        return res.status(500).json({ 
+          status: "error", 
+          message: "Database error",
+          details: error.message
+        });
+      }
+
+      return res.status(200).json({ 
+        status: "success", 
+        message: "Connected to Supabase!",
+        data: data 
+      });
+
+    } catch (err) {
+      console.error("Server Error:", err);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Internal server error",
+        details: err.message 
+      });
+    }
+  }
+
   // ✅ Validate Key
   if (action === 'validate') {
     if (!key) {
@@ -24,16 +57,19 @@ export default async function handler(req, res) {
     }
 
     try {
-      // 🔥 Table name: "key" (અહીં ધ્યાન આપો)
       const { data, error } = await supabase
-        .from('key')   // ← Table name: key
+        .from('key')
         .select('*')
         .eq('key', key)
         .single();
 
       if (error) {
         console.error("Supabase Error:", error);
-        return res.status(500).json({ status: "error", message: "Database error" });
+        return res.status(500).json({ 
+          status: "error", 
+          message: "Database error",
+          details: error.message 
+        });
       }
 
       if (data) {
@@ -76,7 +112,11 @@ export default async function handler(req, res) {
 
     } catch (err) {
       console.error("Server Error:", err);
-      return res.status(500).json({ status: "error", message: "Internal server error" });
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Internal server error",
+        details: err.message 
+      });
     }
   }
 
@@ -90,7 +130,7 @@ export default async function handler(req, res) {
 
     try {
       const { data, error } = await supabase
-        .from('key')   // ← Table name: key
+        .from('key')
         .insert([
           { 
             key: key, 
@@ -123,7 +163,7 @@ export default async function handler(req, res) {
 
     try {
       const { data, error } = await supabase
-        .from('key')   // ← Table name: key
+        .from('key')
         .delete()
         .eq('key', key);
 
@@ -150,7 +190,7 @@ export default async function handler(req, res) {
 
     try {
       const { data, error } = await supabase
-        .from('key')   // ← Table name: key
+        .from('key')
         .select('*')
         .eq('key', key)
         .single();
@@ -172,7 +212,7 @@ export default async function handler(req, res) {
       devices.push(deviceId);
 
       const { error: updateError } = await supabase
-        .from('key')   // ← Table name: key
+        .from('key')
         .update({ devices: devices })
         .eq('key', key);
 
