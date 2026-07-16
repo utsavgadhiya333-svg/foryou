@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
     // ડેટાબેઝમાંથી કી તપાસો
     const { data, error } = await supabase
-      .from('key')
+      .from('key_data')
       .select('*')
       .eq('key', key)
       .single();
